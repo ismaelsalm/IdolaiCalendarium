@@ -1,0 +1,86 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace IdolaiCalendarium
+{
+    
+    public class IdolaiDate
+    {
+        public int Year {get; private set; }
+        public int Month {get; private set; }
+        public int Day {get; private set;}
+
+        public bool IsZarconianYear {get => IdolaiCalendar.IsZarconianYear(Year); }
+        public ZodiacSigns ZodiacSign { get => ZodiacCalculator.GetZodiacSign(Month);}
+        public ZodiacYear ZodiacYear{ get => ZodiacCalculator.zodiacYear(Year);}
+
+        public IdolaiDate(){
+            Year = 1;
+            Month = 1;
+            Day = 1;
+        }
+        public IdolaiDate(int year, int month, int day){         
+            Year = year;
+            Month = month;
+            Day = day;
+        }
+
+        public override string ToString()
+        {
+            string leapObs = IsZarconianYear ? " It's a Zarconian year! " : "";
+            return $"{Day}/{Month}/{Year}  Year of the {ZodiacYear}. Your zodiac sign is: {ZodiacSign}.{leapObs}";
+            
+        }
+
+
+        public IdolaiDate AddDays(int days){
+            Console.WriteLine($"add days in: {days}");
+            Day += days;
+            Console.WriteLine($"add days Day: {Day}");
+            while (Day > IdolaiCalendar.DaysInYear(Year))
+            {
+                Day -= IdolaiCalendar.DaysInYear(Year);
+                Year++;
+            }
+            Console.WriteLine($"add days Year: {Year}");
+
+            if(IdolaiCalendar.DaysPerMonth > Day){
+                return this;
+            }
+
+            Console.WriteLine($"add days before month: {Day}");
+            int months = Day / IdolaiCalendar.DaysPerMonth;
+            Day %= IdolaiCalendar.DaysPerMonth;
+            AddMonths(months);
+            
+            return this;
+        }
+
+        public IdolaiDate AddMonths(int months){
+            Month += months;
+            int numberOfMonths = IdolaiCalendar.NumberOfMonths(Year);
+            while (Month > numberOfMonths)
+            {
+                Month -= numberOfMonths - 1;
+                Year++;
+                numberOfMonths = IdolaiCalendar.NumberOfMonths(Year);
+            }
+
+            
+            return this;
+        }
+
+        public IdolaiDate AddYears(int years){
+            bool wasZarconian = IdolaiCalendar.IsZarconianYear(Year);
+            Year += years;
+            if(!wasZarconian && IdolaiCalendar.IsZarconianYear(Year)){
+                return AddMonths(1);
+            }
+            return this;
+        }
+
+    }
+}
