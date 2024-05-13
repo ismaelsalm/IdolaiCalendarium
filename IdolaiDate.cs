@@ -37,21 +37,16 @@ namespace IdolaiCalendarium
 
 
         public IdolaiDate AddDays(int days){
-            Console.WriteLine($"add days in: {days}");
             Day += days;
-            Console.WriteLine($"add days Day: {Day}");
             while (Day > IdolaiCalendar.DaysInYear(Year))
             {
                 Day -= IdolaiCalendar.DaysInYear(Year);
                 Year++;
             }
-            Console.WriteLine($"add days Year: {Year}");
 
             if(IdolaiCalendar.DaysPerMonth > Day){
                 return this;
             }
-
-            Console.WriteLine($"add days before month: {Day}");
             int months = Day / IdolaiCalendar.DaysPerMonth;
             Day %= IdolaiCalendar.DaysPerMonth;
             AddMonths(months);
